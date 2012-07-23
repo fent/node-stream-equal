@@ -1,0 +1,26 @@
+{
+  "name": "stream-equal",
+  "description": "Test that two readable streams are equal to each other.",
+  "keywords": ["stream", "input", "output", "io", "assert", "test"],
+  "version": "0.1.0",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/fent/node-stream-equal.git"
+  },
+  "author": "Roly Fentanes (https://github.com/fent)",
+  "main": "./lib/index.js",
+  "scripts": {
+    "test": "mocha -R spec test/*-test.js"
+  },
+  "directories": {
+    "lib": "./lib"
+  },
+  "devDependencies": {
+    "mocha": "x",
+    "from": "~0.0.2"
+  },
+  "licenses": [ {
+    "type": "MIT",
+    "url" : "http://github.com/fent/node-stream-equal/raw/master/LICENSE"
+  }]
+}
