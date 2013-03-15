@@ -1,6 +1,6 @@
 var streamEqual = require('..')
   , assert      = require('assert')
-  , from        = require('from')
+  , PassThrough = require('readable-stream').PassThrough
   , fs          = require('fs')
   , path        = require('path')
   ;
@@ -67,8 +67,26 @@ describe('Compare two obviously different streams', function() {
 
 describe('Compare two similar streams', function() {
   it('Streams should not be equal', function(done) {
-    var stream1 = from('you\'re the man now'.split(' '));
-    var stream2 = from('you\'re the man now dawg'.split(' '));
+    var stream1 = new PassThrough();
+    var stream2 = new PassThrough();
+
+    function writeToStream(stream, str) {
+      var pieces = str.split(' ');
+
+      process.nextTick(function next() {
+        var piece = pieces.shift();
+        if (piece) {
+          stream.write(piece);
+          process.nextTick(next);
+        } else {
+          stream.end();
+          stream.push(null);
+        }
+      });
+    }
+
+    writeToStream(stream1, 'you\'re the man now');
+    writeToStream(stream2, 'you\'re the man now dawg!');
 
     streamEqual(stream1, stream2, function(err, equal) {
       if (err) return done(err);
