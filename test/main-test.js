@@ -80,7 +80,6 @@ describe('Compare two similar streams', function() {
           process.nextTick(next);
         } else {
           stream.end();
-          stream.push(null);
         }
       });
     }
