@@ -16,8 +16,8 @@ var file1 = __filename
 /**
  * Tests that file1 and file2 streams are equal with different options.
  *
- * @param (Object) options1
- * @param (Object) options2
+ * @param {Object} options1
+ * @param {Object} options2
  */
 function testEqual(options1, options2) {
   it('Streams should be equal', function(done) {
