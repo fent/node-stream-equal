@@ -2,7 +2,7 @@
   "name": "stream-equal",
   "description": "Test that two readable streams are equal to each other.",
   "keywords": ["stream", "input", "output", "io", "assert", "test"],
-  "version": "0.1.3",
+  "version": "0.1.4",
   "repository": {
     "type": "git",
     "url": "git://github.com/fent/node-stream-equal.git"
