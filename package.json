@@ -15,12 +15,8 @@
   "directories": {
     "lib": "./lib"
   },
-  "dependencies": {
-    "readable-stream": "~1.1.9"
-  },
   "devDependencies": {
-    "mocha": "x",
-    "from": "~0.0.2"
+    "mocha": "x"
   },
   "licenses": [ {
     "type": "MIT",
