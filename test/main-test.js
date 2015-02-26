@@ -1,16 +1,14 @@
-var streamEqual = require('..')
-  , assert      = require('assert')
-  , PassThrough = require('readable-stream').PassThrough
-  , fs          = require('fs')
-  , path        = require('path')
-  ;
+var streamEqual = require('..');
+var assert      = require('assert');
+var PassThrough = require('stream').PassThrough;
+var fs          = require('fs');
+var path        = require('path');
 
 
-var file1 = __filename
-  , file2 = __filename
-  , file3 = path.join(__dirname, '..', 'README.md')
-  , file4 = path.join(__dirname, '..', 'lib', 'index.js')
-  ;
+var file1 = __filename;
+var file2 = __filename;
+var file3 = path.join(__dirname, '..', 'README.md');
+var file4 = path.join(__dirname, '..', 'lib', 'index.js');
 
 
 /**
