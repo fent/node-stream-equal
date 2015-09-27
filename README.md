@@ -1,7 +1,8 @@
-# node-stream-equal [![Build Status](https://secure.travis-ci.org/fent/node-stream-equal.png)](http://travis-ci.org/fent/node-stream-equal)
+# node-stream-equal
 
 Test that two readable streams are equal to each other.
 
+[![Build Status](https://secure.travis-ci.org/fent/node-stream-equal.png)](http://travis-ci.org/fent/node-stream-equal) [![Dependency Status](https://gemnasium.com/fent/node-stream-equal.svg)](https://gemnasium.com/fent/node-stream-equal)
 
 # Usage
 
