@@ -24,7 +24,6 @@ function testEqual(options1, options2) {
 
     streamEqual(stream1, stream2, function(err, equal) {
       if (err) return done(err);
-
       assert.ok(equal);
       done();
     });
@@ -55,7 +54,6 @@ describe('Compare two obviously different streams', function() {
 
     streamEqual(stream1, stream2, function(err, equal) {
       if (err) return done(err);
-
       assert.ok(!equal);
       done();
     });
@@ -87,9 +85,54 @@ describe('Compare two similar streams', function() {
 
     streamEqual(stream1, stream2, function(err, equal) {
       if (err) return done(err);
-
       assert.ok(!equal);
       done();
     });
+  });
+});
+
+describe('Comapre two object streams', function() {
+  function writeToStream(stream, objects) {
+    process.nextTick(function next() {
+      var obj = objects.shift();
+      if (obj) {
+        stream.write(obj);
+        process.nextTick(next);
+      } else {
+        stream.end();
+      }
+    });
+  }
+
+  describe('that are equal', function() {
+    it('Streams should be equal', function(done) {
+      var stream1 = new PassThrough({ objectMode: true });
+      var stream2 = new PassThrough({ objectMode: true });
+
+      writeToStream(stream1, [{ foo: 1 }, { bar: 3  }, { bizz: 'buzzz' }]);
+      writeToStream(stream2, [{ foo: 1 }, { bar: 3  }, { bizz: 'buzzz' }]);
+
+      streamEqual(stream1, stream2, function(err, equal) {
+        if (err) return done(err);
+        assert.ok(equal);
+        done();
+      });
+    })
+  });
+
+  describe('that are not equal', function() {
+    it('Streams should not be equal', function(done) {
+      var stream1 = new PassThrough({ objectMode: true });
+      var stream2 = new PassThrough({ objectMode: true });
+
+      writeToStream(stream1, [{ foo: 1 }, { baz: 9  }, { bizz: 'buzzz' }]);
+      writeToStream(stream2, [{ foo: 1 }, { bar: 3  }, { bizz: 'buzzz' }]);
+
+      streamEqual(stream1, stream2, function(err, equal) {
+        if (err) return done(err);
+        assert.ok(!equal);
+        done();
+      });
+    })
   });
 });
