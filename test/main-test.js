@@ -18,7 +18,7 @@ var file4 = path.join(__dirname, '..', 'lib', 'index.js');
  * @param {Object} options2
  */
 function testEqual(options1, options2) {
-  it('Streams should be equal', function(done) {
+  it('Streams should be equal (callback)', function(done) {
     var stream1 = fs.createReadStream(file1, options1);
     var stream2 = fs.createReadStream(file2, options2);
 
@@ -26,6 +26,15 @@ function testEqual(options1, options2) {
       if (err) return done(err);
       assert.ok(equal);
       done();
+    });
+  });
+
+  it('Streams should be equal (promise)', function() {
+    var stream1 = fs.createReadStream(file1, options1);
+    var stream2 = fs.createReadStream(file2, options2);
+
+    return streamEqual(stream1, stream2).then(function(equal) {
+      assert.ok(equal);
     });
   });
 }
@@ -48,7 +57,7 @@ describe('Compare two streams from the same file', function() {
 
 
 describe('Compare two obviously different streams', function() {
-  it('Streams should not be equal', function(done) {
+  it('Streams should not be equal (callback)', function(done) {
     var stream1 = fs.createReadStream(file3, { bufferSize: 128 });
     var stream2 = fs.createReadStream(file4, { bufferSize: 128 });
 
@@ -56,6 +65,15 @@ describe('Compare two obviously different streams', function() {
       if (err) return done(err);
       assert.ok(!equal);
       done();
+    });
+  });
+
+  it('Streams should not be equal (promise)', function() {
+    var stream1 = fs.createReadStream(file3, { bufferSize: 128 });
+    var stream2 = fs.createReadStream(file4, { bufferSize: 128 });
+
+    return streamEqual(stream1, stream2).then(function(equal) {
+      assert.ok(!equal);
     });
   });
 });
