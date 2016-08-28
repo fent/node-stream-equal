@@ -2,7 +2,9 @@
 
 Test that two readable streams are equal to each other.
 
-[![Build Status](https://secure.travis-ci.org/fent/node-stream-equal.png)](http://travis-ci.org/fent/node-stream-equal) [![Dependency Status](https://gemnasium.com/fent/node-stream-equal.svg)](https://gemnasium.com/fent/node-stream-equal)
+[![Build Status](https://secure.travis-ci.org/fent/node-stream-equal.svg)](http://travis-ci.org/fent/node-stream-equal)
+[![Dependency Status](https://gemnasium.com/fent/node-stream-equal.svg)](https://gemnasium.com/fent/node-stream-equal)
+[![codecov](https://codecov.io/gh/fent/node-stream-equal/branch/master/graph/badge.svg)](https://codecov.io/gh/fent/node-stream-equal)
 
 # Usage
 
