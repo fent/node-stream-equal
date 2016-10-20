@@ -24,7 +24,9 @@
   },
   "devDependencies": {
     "istanbul": "*",
-    "mocha": "*"
+    "mocha": "*",
+    "nock": "^8.1.0",
+    "request": "^2.75.0"
   },
   "licenses": [
     {
