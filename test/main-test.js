@@ -3,12 +3,19 @@ var assert      = require('assert');
 var PassThrough = require('stream').PassThrough;
 var fs          = require('fs');
 var path        = require('path');
+var http        = require('http');
+var request     = require('request');
+var nock        = require('nock');
 
 
 var file1 = __filename;
 var file2 = __filename;
 var file3 = path.join(__dirname, '..', 'README.md');
 var file4 = path.join(__dirname, '..', 'lib', 'index.js');
+var file5 = path.join(__dirname, 'assets', 'test1Mb.db');
+var url1 = 'http://speedtest.ftp.otenet.gr/files/test1Mb.db';
+var urlhost1 = 'http://speedtest.ftp.otenet.gr';
+var urlpath1 = '/files/test1Mb.db';
 
 
 /**
@@ -51,6 +58,37 @@ describe('Compare two streams from the same file', function() {
 
   describe('with utf8 encoding', function() {
     testEqual({ encoding: 'utf8' }, { encoding: 'utf8' });
+  });
+
+  describe('where one stream is an http request', function() {
+    it('Streams should be equal', function(done) {
+      nock(urlhost1)
+        .get(urlpath1)
+        .replyWithFile(200, file5);
+      http.get(url1, function(stream2) {
+        var stream1 = fs.createReadStream(file5);
+        streamEqual(stream1, stream2, function(err, equal) {
+          if (err) return done(err);
+          assert.ok(equal);
+          done();
+        });
+      });
+    });
+  });
+
+  describe('using the request module', function() {
+    it('Streams should be equal', function(done) {
+      nock(urlhost1)
+        .get(urlpath1)
+        .replyWithFile(200, file5);
+      var stream1 = fs.createReadStream(file5);
+      var stream2 = request.get(url1);
+      streamEqual(stream1, stream2, function(err, equal) {
+        if (err) return done(err);
+        assert.ok(equal);
+        done();
+      });
+    });
   });
 
 });
@@ -135,7 +173,7 @@ describe('Comapre two object streams', function() {
         assert.ok(equal);
         done();
       });
-    })
+    });
   });
 
   describe('that are not equal', function() {
@@ -151,6 +189,6 @@ describe('Comapre two object streams', function() {
         assert.ok(!equal);
         done();
       });
-    })
+    });
   });
 });
