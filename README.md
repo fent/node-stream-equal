@@ -23,7 +23,7 @@ streamEqual(readStream1, readStream2, function(err, equal) {
 # Motive
 Useful for testing. This method is faster and uses much less memory than buffering entire streams and comparing their content, specially for bigger files.
 
-You could also get the hash sum of a stream to test it against another stream. But that would take up more CPU due to the hashing and would require the entire streams to be read if they are not equal.
+You could also get the hash sum of a stream to test it against another stream. But that would take up more CPU due to the hashing and would require a bit more data to be read if they are not equal.
 
 
 # API
