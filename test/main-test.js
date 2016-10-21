@@ -192,3 +192,24 @@ describe('Comapre two object streams', function() {
     });
   });
 });
+
+describe('Compare with an errornous stream', function() {
+  it('Returns an error (callback)', function(done) {
+    var stream1 = fs.createReadStream(file3, { bufferSize: 128 });
+    var stream2 = fs.createReadStream('dontexist', { bufferSize: 128 });
+    streamEqual(stream1, stream2, function(err) {
+      assert.ok(err);
+      assert.equal(err.code, 'ENOENT');
+      done();
+    });
+  });
+
+  it('Returns an error (promise)', function() {
+    var stream1 = fs.createReadStream(file3, { bufferSize: 128 });
+    var stream2 = fs.createReadStream('dontexist', { bufferSize: 128 });
+    return streamEqual(stream1, stream2).catch(function(err) {
+      assert.ok(err);
+      assert.equal(err.code, 'ENOENT');
+    });
+  });
+});
