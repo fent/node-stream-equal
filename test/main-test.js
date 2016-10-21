@@ -64,6 +64,7 @@ describe('Compare two streams from the same file', function() {
     it('Streams should be equal', function(done) {
       nock(urlhost1)
         .get(urlpath1)
+        .delayBody(100)
         .replyWithFile(200, file5);
       http.get(url1, function(stream2) {
         var stream1 = fs.createReadStream(file5);
