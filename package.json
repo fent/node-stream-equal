@@ -16,11 +16,15 @@
   },
   "author": "fent (https://github.com/fent)",
   "main": "./lib/index.js",
+  "typings": "./lib/index.d.ts",
   "scripts": {
     "test": "istanbul cover node_modules/.bin/_mocha -- test/*-test.js"
   },
   "directories": {
     "lib": "./lib"
+  },
+  "dependencies": {
+    "@types/node": "*"
   },
   "devDependencies": {
     "istanbul": "*",
