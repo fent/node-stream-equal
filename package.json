@@ -32,10 +32,5 @@
     "nock": "^9.0.2",
     "request": "^2.75.0"
   },
-  "licenses": [
-    {
-      "type": "MIT",
-      "url": "http://github.com/fent/node-stream-equal/raw/master/LICENSE"
-    }
-  ]
+  "license": "MIT"
 }
