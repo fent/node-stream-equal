@@ -23,7 +23,7 @@
   "directories": {
     "lib": "./lib"
   },
-  "dependencies": {
+  "optionalDependencies": {
     "@types/node": "*"
   },
   "devDependencies": {
