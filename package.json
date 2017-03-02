@@ -9,7 +9,7 @@
     "assert",
     "test"
   ],
-  "version": "0.1.13",
+  "version": "1.0.0",
   "repository": {
     "type": "git",
     "url": "git://github.com/fent/node-stream-equal.git"
@@ -32,6 +32,8 @@
     "nock": "^9.0.2",
     "request": "^2.75.0"
   },
-  "engines": { "node": ">=0.12" },
+  "engines": {
+    "node": ">=0.12"
+  },
   "license": "MIT"
 }
