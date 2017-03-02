@@ -27,9 +27,9 @@ You could also get the hash sum of a stream to test it against another stream. B
 
 
 # API
-### streamEqual(readStream1, readStream2, callback(err, equal))
+### streamEqual(readStream1, readStream2, [callback(err, equal)])
 
-Will compare each `data` event on both streams, pausing when needed to keep them in sync. `equal` will be either `true` or `false` if there is no `err`.
+Will compare each `data` event on both streams, pausing when needed to keep them in sync. `equal` will be either `true` or `false` if there is no `err`. Returns a promise if callback is not given.
 
 
 # Install
