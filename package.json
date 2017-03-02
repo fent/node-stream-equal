@@ -32,5 +32,6 @@
     "nock": "^9.0.2",
     "request": "^2.75.0"
   },
+  "engines": { "node": ">=0.12" },
   "license": "MIT"
 }
