@@ -9,7 +9,7 @@
     "assert",
     "test"
   ],
-  "version": "1.0.1",
+  "version": "1.1.0",
   "repository": {
     "type": "git",
     "url": "git://github.com/fent/node-stream-equal.git"
