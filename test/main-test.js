@@ -17,6 +17,9 @@ var url1 = 'http://speedtest.ftp.otenet.gr/files/test1Mb.db';
 var urlhost1 = 'http://speedtest.ftp.otenet.gr';
 var urlpath1 = '/files/test1Mb.db';
 
+before(function() { nock.disableNetConnect(); });
+after(function() { nock.enableNetConnect(); });
+
 
 /**
  * Tests that file1 and file2 streams are equal with different options.
@@ -64,7 +67,6 @@ describe('Compare two streams from the same file', function() {
     it('Streams should be equal', function(done) {
       nock(urlhost1)
         .get(urlpath1)
-        .delayBody(100)
         .replyWithFile(200, file5);
       http.get(url1, function(stream2) {
         var stream1 = fs.createReadStream(file5);
