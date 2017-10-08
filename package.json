@@ -30,8 +30,8 @@
     "@types/node": "*"
   },
   "devDependencies": {
-    "istanbul": "*",
-    "mocha": "*",
+    "istanbul": "^0.4.5",
+    "mocha": "^4.0.1",
     "nock": "^9.0.22",
     "request": "^2.75.0"
   },
