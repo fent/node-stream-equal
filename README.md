@@ -12,8 +12,8 @@ Test that two readable streams are equal to each other.
 const streamEqual = require('stream-equal');
 const fs = require('fs');
 
-var readStream1 = fs.createReadStream(file);
-var readStream2 = fs.createReadStream(file);
+let readStream1 = fs.createReadStream(file);
+let readStream2 = fs.createReadStream(file);
 streamEqual(readStream1, readStream2, (err, equal) => {
   console.log(equal); // true
 });
