@@ -33,7 +33,7 @@
     "istanbul": "^0.4.5",
     "mocha": "^5.0.0",
     "nock": "^10.0.0",
-    "request": "^2.85.0"
+    "request": "^2.88.0"
   },
   "engines": {
     "node": ">=6"
