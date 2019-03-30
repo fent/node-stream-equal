@@ -27,7 +27,7 @@
     "lib": "./lib"
   },
   "optionalDependencies": {
-    "@types/node": "*"
+    "@types/node": ">=11.12.1"
   },
   "devDependencies": {
     "istanbul": "^0.4.5",
