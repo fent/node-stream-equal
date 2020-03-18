@@ -14,7 +14,7 @@
     "type": "git",
     "url": "git://github.com/fent/node-stream-equal.git"
   },
-  "author": "fent (https://github.com/fent)",
+  "author": "fent <fentbox@gmail.com> (https://github.com/fent)",
   "main": "./lib/index.js",
   "files": [
     "lib"
