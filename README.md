@@ -13,22 +13,20 @@ const fs = require('fs');
 
 let readStream1 = fs.createReadStream(file);
 let readStream2 = fs.createReadStream(file);
-streamEqual(readStream1, readStream2, (err, equal) => {
-  console.log(equal); // true
-});
+let equal = await streamEqual(readStream1, readStream2);
 ```
 
 
 # Motive
-Useful for testing. This method is faster and uses much less memory than buffering entire streams and comparing their content, specially for bigger files.
+Useful for testing. This method of comparing is faster and uses less memory than buffering entire streams and comparing their content, specially for bigger files.
 
 You could also get the hash sum of a stream to test it against another stream. But that would take up more CPU due to the hashing and would require a bit more data to be read if they are not equal.
 
 
 # API
-### streamEqual(readStream1, readStream2, [callback(err, equal)])
+### async streamEqual(readStream1, readStream2)
 
-Will compare each `data` event on both streams, pausing when needed to keep them in sync. `equal` will be either `true` or `false` if there is no `err`. Returns a promise if callback is not given.
+A function that compares each `data` event on both streams, pausing when needed to keep them in sync. Returns either `true` or `false`.
 
 
 # Install
