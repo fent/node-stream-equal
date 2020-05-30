@@ -36,7 +36,7 @@
     "request": "^2.88.0"
   },
   "engines": {
-    "node": ">=6"
+    "node": ">=10"
   },
   "license": "MIT"
 }
