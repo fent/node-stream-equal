@@ -21,7 +21,7 @@
   ],
   "typings": "./lib/index.d.ts",
   "scripts": {
-    "test": "istanbul cover node_modules/.bin/_mocha -- test/*-test.js"
+    "test": "nyc --reporter=lcov --reporter=text-summary mocha -- test/*-test.js"
   },
   "directories": {
     "lib": "./lib"
@@ -30,13 +30,14 @@
     "@types/node": "*"
   },
   "devDependencies": {
-    "istanbul": "^0.4.5",
     "mocha": "^6.0.0",
     "nock": "^12.0.3",
+    "nyc": "^15.0.1",
     "request": "^2.88.0"
   },
   "engines": {
     "node": ">=10"
   },
-  "license": "MIT"
+  "license": "MIT",
+  "dependencies": {}
 }
