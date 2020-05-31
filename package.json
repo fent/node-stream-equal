@@ -15,26 +15,29 @@
     "url": "git://github.com/fent/node-stream-equal.git"
   },
   "author": "fent <fentbox@gmail.com> (https://github.com/fent)",
-  "main": "./lib/index.js",
+  "main": "./dist/index.js",
   "files": [
-    "lib"
+    "dist"
   ],
-  "typings": "./lib/index.d.ts",
   "scripts": {
-    "test": "nyc --reporter=lcov --reporter=text-summary npm run test:unit",
-    "test:unit": "mocha -- test/*-test.js"
+    "build": "tsc -p tsconfig.build.json",
+    "test": "nyc --extension .ts --reporter=lcov --reporter=text-summary npm run test:unit",
+    "test:unit": "mocha -- --require ts-node/register test/*-test.ts"
   },
   "directories": {
     "lib": "./lib"
   },
-  "optionalDependencies": {
-    "@types/node": "*"
-  },
   "devDependencies": {
+    "@types/mocha": "^7.0.2",
+    "@types/nock": "^11.1.0",
+    "@types/node": "^14.0.6",
+    "@types/request": "^2.48.5",
     "mocha": "^6.0.0",
     "nock": "^12.0.3",
     "nyc": "^15.0.1",
-    "request": "^2.88.0"
+    "request": "^2.88.0",
+    "ts-node": "^8.10.2",
+    "typescript": "^3.9.3"
   },
   "engines": {
     "node": ">=10"

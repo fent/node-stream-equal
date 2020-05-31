@@ -1,18 +1,13 @@
-const streamEqual = require('..');
-const assert      = require('assert');
-const PassThrough = require('stream').PassThrough;
-const fs          = require('fs');
-const path        = require('path');
-const http        = require('http');
-const request     = require('request');
-const nock        = require('nock');
+import streamEqual from '../dist';
+import assert from 'assert';
+import { PassThrough, Writable, Readable } from 'stream';
+import fs from 'fs';
+import path from 'path';
+import http from 'http';
+import request from 'request';
+import nock from 'nock';
 
 
-const file1 = __filename;
-const file2 = __filename;
-const file3 = path.join(__dirname, '..', 'README.md');
-const file4 = path.join(__dirname, '..', 'lib', 'index.js');
-const file5 = path.join(__dirname, 'assets', 'test1Mb.db');
 const url1 = 'http://speedtest.ftp.otenet.gr/files/test1Mb.db';
 const urlhost1 = 'http://speedtest.ftp.otenet.gr';
 const urlpath1 = '/files/test1Mb.db';
@@ -22,19 +17,19 @@ after(() => { nock.enableNetConnect(); });
 
 
 /**
- * Tests that file1 and file2 streams are equal with different options.
+ * Tests that the same file is equal with different options.
  *
  * @param {Object} options1
  * @param {Object} options2
  */
-const testEqual = (options1, options2) => {
-  it('Streams should be equal', () => {
+const testEqual = (options1: {}, options2: {}) => {
+  it('Streams should be equal', async () => {
+    const file1 = __filename;
     const stream1 = fs.createReadStream(file1, options1);
-    const stream2 = fs.createReadStream(file2, options2);
+    const stream2 = fs.createReadStream(file1, options2);
 
-    return streamEqual(stream1, stream2).then((equal) => {
-      assert.ok(equal);
-    });
+    let equal = await streamEqual(stream1, stream2);
+    assert.ok(equal);
   });
 };
 
@@ -45,7 +40,7 @@ const testEqual = (options1, options2) => {
  * @param {WritableStream} stream
  * @param {string|Array<Object>} list
  */
-const writeToStream = (stream, list) => {
+const writeToStream = (stream: Writable, list: string | Array<{}>) => {
   const pieces = Array.isArray(list) ? list : list.split(' ');
   const next = () => {
     const piece = pieces.shift();
@@ -75,11 +70,12 @@ describe('Compare two streams from the same file', () => {
 
   describe('where one stream is an http request', () => {
     it('Streams should be equal', (done) => {
+      const file1 = path.join(__dirname, 'assets', 'test1Mb.db');
       const scope = nock(urlhost1)
         .get(urlpath1)
-        .replyWithFile(200, file5);
+        .replyWithFile(200, file1);
       http.get(url1, async (stream2) => {
-        const stream1 = fs.createReadStream(file5);
+        const stream1 = fs.createReadStream(file1);
         let equal = await streamEqual(stream1, stream2);
         scope.done();
         assert.ok(equal);
@@ -90,11 +86,12 @@ describe('Compare two streams from the same file', () => {
 
   describe('using the request module', () => {
     it('Streams should be equal', async () => {
+      const file1 = path.join(__dirname, 'assets', 'test1Mb.db');
       const scope = nock(urlhost1)
         .get(urlpath1)
-        .replyWithFile(200, file5);
-      const stream1 = fs.createReadStream(file5);
-      const stream2 = request.get(url1);
+        .replyWithFile(200, file1);
+      const stream1 = fs.createReadStream(file1);
+      const stream2 = request.get(url1) as unknown as Readable;
       let equal = await streamEqual(stream1, stream2);
       scope.done();
       assert.ok(equal);
@@ -106,8 +103,10 @@ describe('Compare two streams from the same file', () => {
 
 describe('Compare two obviously different streams', () => {
   it('Streams should not be equal', async () => {
-    const stream1 = fs.createReadStream(file3, { bufferSize: 128 });
-    const stream2 = fs.createReadStream(file4, { bufferSize: 128 });
+    const file1 = path.join(__dirname, '..', 'README.md');
+    const file2 = path.join(__dirname, '..', 'src', 'index.ts');
+    const stream1 = fs.createReadStream(file1, { highWaterMark: 128 });
+    const stream2 = fs.createReadStream(file2, { highWaterMark: 128 });
     let equal = await streamEqual(stream1, stream2);
     assert.ok(!equal);
   });
@@ -157,8 +156,9 @@ describe('Comapre two object streams', () => {
 
 describe('Compare with an errornous stream', () => {
   it('Returns an error (callback)', async () => {
-    const stream1 = fs.createReadStream(file3, { bufferSize: 128 });
-    const stream2 = fs.createReadStream('dontexist', { bufferSize: 128 });
+    const file1 = path.join(__dirname, '..', 'README.md');
+    const stream1 = fs.createReadStream(file1, { highWaterMark: 128 });
+    const stream2 = fs.createReadStream('dontexist', { highWaterMark: 128 });
     assert.rejects(
       streamEqual(stream1, stream2),
       'ENOENT'

@@ -1,56 +1,65 @@
-const PassThrough = require('stream').PassThrough;
+import { PassThrough, Readable } from 'stream';
 
+
+interface StreamState {
+  id: number;
+  stream: Readable;
+  data: Buffer;
+  pos: number;
+  ended: boolean;
+  read?: () => void;
+}
 
 /**
  * Tests that two readable streams are equal.
  *
- * @param {Readable|Stream} readStream2
- * @param {Readable|Stream} readStream2
+ * @param {Readable} stream1
+ * @param {Readable} stream2
  * @returns {boolean}
  */
-module.exports = (origStream1, origStream2) => new Promise((resolve, reject) => {
-  const readStream1 = origStream1.pipe(new PassThrough({ objectMode: true }));
-  const readStream2 = origStream2.pipe(new PassThrough({ objectMode: true }));
+export default (stream1: Readable, stream2: Readable) => new Promise<boolean>((resolve, reject) => {
+  const readStream1 = stream1.pipe(new PassThrough({ objectMode: true }));
+  const readStream2 = stream2.pipe(new PassThrough({ objectMode: true }));
 
-  const cleanup = (equal) => {
-    origStream1.removeListener('error', reject);
+  const cleanup = (equal: boolean) => {
+    stream1.removeListener('error', reject);
     readStream1.removeListener('end', onend1);
-    readStream1.removeListener('readable', stream1.read);
+    readStream1.removeListener('readable', streamState1.read);
 
-    origStream2.removeListener('error', reject);
+    stream2.removeListener('error', reject);
     readStream2.removeListener('end', onend2);
-    readStream1.removeListener('readable', stream2.read);
+    readStream1.removeListener('readable', streamState2.read);
 
     resolve(equal);
   };
 
-  const stream1 = {
+  const streamState1: StreamState = {
     id: 1,
     stream: readStream1,
     data: null,
     pos: 0,
     ended: false,
   };
-  const stream2 = {
+  const streamState2: StreamState = {
     id: 2,
     stream: readStream2,
     data: null,
     pos: 0,
     ended: false,
   };
-  stream1.read = createRead(stream1, stream2, cleanup);
-  stream2.read = createRead(stream2, stream1, cleanup);
-  const onend1 = createOnEnd(stream1, stream2, cleanup);
-  const onend2 = createOnEnd(stream2, stream1, cleanup);
+  streamState1.read = createReadFn(streamState1, streamState2, cleanup);
+  streamState2.read = createReadFn(streamState2, streamState1, cleanup);
+  const onend1 = createOnEndFn(streamState1, streamState2, cleanup);
+  const onend2 = createOnEndFn(streamState2, streamState1, cleanup);
 
-  origStream1.on('error', reject);
+  stream1.on('error', reject);
   readStream1.on('end', onend1);
 
-  origStream2.on('error', reject);
+  stream2.on('error', reject);
   readStream2.on('end', onend2);
 
   // Start by reading from the first stream.
-  stream1.stream.once('readable', stream1.read);
+  streamState1.stream.once('readable', streamState1.read);
 });
 
 
@@ -58,12 +67,12 @@ module.exports = (origStream1, origStream2) => new Promise((resolve, reject) => 
  * Returns a function that compares emitted `read()` call with that of the
  * most recent `read` call from another stream.
  *
- * @param {Object} stream
- * @param {Object} otherStream
+ * @param {StreamState} stream
+ * @param {StreamState} otherStream
  * @param {Function(boolean)} resolve
  * @return {Function(Buffer|string)}
  */
-const createRead = (stream, otherStream, resolve) => {
+const createReadFn = (stream: StreamState, otherStream: StreamState, resolve: (equal: boolean) => void) => {
   return () => {
     let data = stream.stream.read();
     if (!data) {
@@ -125,11 +134,11 @@ const createRead = (stream, otherStream, resolve) => {
 /**
  * Creates a function that gets called when a stream ends.
  *
- * @param {Object} stream
- * @param {Object} otherStream
+ * @param {StreamState} stream
+ * @param {StreamState} otherStream
  * @param {Function(boolean)} resolve
  */
-const createOnEnd = (stream, otherStream, resolve) => {
+const createOnEndFn = (stream: StreamState, otherStream: StreamState, resolve: (equal: boolean) => void) => {
   return () => {
     stream.ended = true;
     if (otherStream.ended) {
