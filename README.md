@@ -26,7 +26,7 @@ You could also get the hash sum of a stream to test it against another stream. B
 # API
 ### async streamEqual(readStream1, readStream2)
 
-A function that compares each `data` event on both streams, pausing when needed to keep them in sync. Returns either `true` or `false`.
+A function that compares each `data` event on both streams, pausing when needed to keep them in sync. Returns a proimse that resolves to either `true` or `false`.
 
 
 # Install
