@@ -17,7 +17,7 @@ interface StreamState {
  * @param {Readable} stream2
  * @returns {boolean}
  */
-export default (stream1: Readable, stream2: Readable) => new Promise<boolean>((resolve, reject) => {
+export = (stream1: Readable, stream2: Readable) => new Promise<boolean>((resolve, reject) => {
   const readStream1 = stream1.pipe(new PassThrough({ objectMode: true }));
   const readStream2 = stream2.pipe(new PassThrough({ objectMode: true }));
 
