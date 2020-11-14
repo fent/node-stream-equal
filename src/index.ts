@@ -67,16 +67,16 @@ export = (stream1: Readable, stream2: Readable) => new Promise<boolean>((resolve
  * Returns a function that compares emitted `read()` call with that of the
  * most recent `read` call from another stream.
  *
- * @param {StreamState} stream
- * @param {StreamState} otherStream
+ * @param {StreamState} streamState
+ * @param {StreamState} otherStreamState
  * @param {Function(boolean)} resolve
  * @return {Function(Buffer|string)}
  */
-const createReadFn = (stream: StreamState, otherStream: StreamState, resolve: (equal: boolean) => void) => {
+const createReadFn = (streamState: StreamState, otherStreamState: StreamState, resolve: (equal: boolean) => void) => {
   return () => {
-    let data = stream.stream.read();
+    let data = streamState.stream.read();
     if (!data) {
-      return stream.stream.once('readable', stream.read);
+      return streamState.stream.once('readable', streamState.read);
     }
 
     // Make sure `data` is a buffer.
@@ -89,32 +89,32 @@ const createReadFn = (stream: StreamState, otherStream: StreamState, resolve: (e
       data = Buffer.from(data);
     }
 
-    const newPos = stream.pos + data.length;
+    const newPos = streamState.pos + data.length;
 
-    if (stream.pos < otherStream.pos) {
-      let minLength = Math.min(data.length, otherStream.data.length);
+    if (streamState.pos < otherStreamState.pos) {
+      let minLength = Math.min(data.length, otherStreamState.data.length);
 
       let streamData = data.slice(0, minLength);
-      stream.data = data.slice(minLength);
+      streamState.data = data.slice(minLength);
 
-      let otherStreamData = otherStream.data.slice(0, minLength);
-      otherStream.data = otherStream.data.slice(minLength);
+      let otherStreamData = otherStreamState.data.slice(0, minLength);
+      otherStreamState.data = otherStreamState.data.slice(minLength);
 
       // Compare.
-      for (let i = 0, len = streamData.length; i < len; i++) {
+      for (let i = 0; i < minLength; i++) {
         if (streamData[i] !== otherStreamData[i]) {
           return resolve(false);
         }
       }
 
     } else {
-      stream.data = data;
+      streamState.data = data;
     }
 
 
-    stream.pos = newPos;
-    if (newPos > otherStream.pos) {
-      if (otherStream.ended) {
+    streamState.pos = newPos;
+    if (newPos > otherStreamState.pos) {
+      if (otherStreamState.ended) {
         // If this stream is still emitting `data` events but the other has
         // ended, then this is longer than the other one.
         return resolve(false);
@@ -122,10 +122,10 @@ const createReadFn = (stream: StreamState, otherStream: StreamState, resolve: (e
 
       // If this stream has caught up to the other,
       // read from other one.
-      otherStream.read();
+      otherStreamState.read();
 
     } else {
-      stream.read();
+      streamState.read();
     }
   };
 };
@@ -134,17 +134,17 @@ const createReadFn = (stream: StreamState, otherStream: StreamState, resolve: (e
 /**
  * Creates a function that gets called when a stream ends.
  *
- * @param {StreamState} stream
- * @param {StreamState} otherStream
+ * @param {StreamState} streamState
+ * @param {StreamState} otherStreamState
  * @param {Function(boolean)} resolve
  */
-const createOnEndFn = (stream: StreamState, otherStream: StreamState, resolve: (equal: boolean) => void) => {
+const createOnEndFn = (streamState: StreamState, otherStreamState: StreamState, resolve: (equal: boolean) => void) => {
   return () => {
-    stream.ended = true;
-    if (otherStream.ended) {
-      resolve(stream.pos === otherStream.pos);
+    streamState.ended = true;
+    if (otherStreamState.ended) {
+      resolve(streamState.pos === otherStreamState.pos);
     } else {
-      otherStream.read();
+      otherStreamState.read();
     }
   };
 };
