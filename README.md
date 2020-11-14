@@ -20,7 +20,7 @@ let equal = await streamEqual(readStream1, readStream2);
 # Motive
 Useful for testing. This method of comparing is faster and uses less memory than buffering entire streams and comparing their content, specially for bigger files.
 
-You could also get the hash sum of a stream to test it against another stream. But that would take up more CPU due to the hashing and would require a bit more data to be read if they are not equal.
+You could also get the hash sum of a stream to test it against another stream. Which is similar to what this library does, without the hashing.
 
 
 # API
