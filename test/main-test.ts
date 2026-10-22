@@ -1,10 +1,10 @@
 import streamEqual from '../dist';
 import assert from 'assert';
-import { PassThrough, Writable, Readable } from 'stream';
+import { PassThrough, Writable } from 'stream';
 import fs from 'fs';
 import path from 'path';
 import http from 'http';
-import request from 'request';
+import miniget from 'miniget';
 import nock from 'nock';
 
 
@@ -84,14 +84,14 @@ describe('Compare two streams from the same file', () => {
     });
   });
 
-  describe('using the request module', () => {
+  describe('using miniget', () => {
     it('Streams should be equal', async () => {
       const file1 = path.join(__dirname, 'assets', 'test1Mb.db');
       const scope = nock(urlhost1)
         .get(urlpath1)
         .replyWithFile(200, file1);
       const stream1 = fs.createReadStream(file1);
-      const stream2 = request.get(url1) as unknown as Readable;
+      const stream2 = miniget(url1);
       let equal = await streamEqual(stream1, stream2);
       scope.done();
       assert.ok(equal);
