@@ -26,14 +26,14 @@
     "test:unit": "mocha --require ts-node/register test/*-test.ts"
   },
   "devDependencies": {
-    "@types/mocha": "^7.0.2",
-    "@types/node": "^14.0.6",
+    "@types/mocha": "^10.0.10",
+    "@types/node": "^20.1.2",
     "miniget": "^4.2.3",
     "mocha": "^12.0.3",
     "nock": "^12.0.3",
     "nyc": "^18.0.0",
-    "ts-node": "^8.10.2",
-    "typescript": "^3.9.3"
+    "ts-node": "^10.9.2",
+    "typescript": "^5.6.3"
   },
   "engines": {
     "node": ">=10"
