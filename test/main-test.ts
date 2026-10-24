@@ -1,20 +1,22 @@
-import streamEqual from '../dist';
 import assert from 'assert';
-import { PassThrough, Writable } from 'stream';
 import fs from 'fs';
-import path from 'path';
 import http from 'http';
 import miniget from 'miniget';
 import nock from 'nock';
-
+import path from 'path';
+import { PassThrough, type Writable } from 'stream';
+import streamEqual from '../dist';
 
 const url1 = 'http://speedtest.ftp.otenet.gr/files/test1Mb.db';
 const urlhost1 = 'http://speedtest.ftp.otenet.gr';
 const urlpath1 = '/files/test1Mb.db';
 
-before(() => { nock.disableNetConnect(); });
-after(() => { nock.enableNetConnect(); });
-
+before(() => {
+  nock.disableNetConnect();
+});
+after(() => {
+  nock.enableNetConnect();
+});
 
 /**
  * Tests that the same file is equal with different options.
@@ -28,11 +30,10 @@ const testEqual = (options1: {}, options2: {}) => {
     const stream1 = fs.createReadStream(file1, options1);
     const stream2 = fs.createReadStream(file1, options2);
 
-    let equal = await streamEqual(stream1, stream2);
+    const equal = await streamEqual(stream1, stream2);
     assert.ok(equal);
   });
 };
-
 
 /**
  * Writes to a stream imitating an asynchronous manner.
@@ -54,7 +55,6 @@ const writeToStream = (stream: Writable, list: string | Array<{}>) => {
   process.nextTick(next);
 };
 
-
 describe('Compare two streams from the same file', () => {
   describe('with different buffer size', () => {
     testEqual({ bufferSize: 64 }, { bufferSize: 42 });
@@ -71,12 +71,10 @@ describe('Compare two streams from the same file', () => {
   describe('where one stream is an http request', () => {
     it('Streams should be equal', (done) => {
       const file1 = path.join(__dirname, 'assets', 'test1Mb.db');
-      const scope = nock(urlhost1)
-        .get(urlpath1)
-        .replyWithFile(200, file1);
+      const scope = nock(urlhost1).get(urlpath1).replyWithFile(200, file1);
       http.get(url1, async (stream2) => {
         const stream1 = fs.createReadStream(file1);
-        let equal = await streamEqual(stream1, stream2);
+        const equal = await streamEqual(stream1, stream2);
         scope.done();
         assert.ok(equal);
         done();
@@ -87,19 +85,15 @@ describe('Compare two streams from the same file', () => {
   describe('using miniget', () => {
     it('Streams should be equal', async () => {
       const file1 = path.join(__dirname, 'assets', 'test1Mb.db');
-      const scope = nock(urlhost1)
-        .get(urlpath1)
-        .replyWithFile(200, file1);
+      const scope = nock(urlhost1).get(urlpath1).replyWithFile(200, file1);
       const stream1 = fs.createReadStream(file1);
       const stream2 = miniget(url1);
-      let equal = await streamEqual(stream1, stream2);
+      const equal = await streamEqual(stream1, stream2);
       scope.done();
       assert.ok(equal);
     });
   });
-
 });
-
 
 describe('Compare two obviously different streams', () => {
   it('Streams should not be equal', async () => {
@@ -107,21 +101,20 @@ describe('Compare two obviously different streams', () => {
     const file2 = path.join(__dirname, '..', 'src', 'index.ts');
     const stream1 = fs.createReadStream(file1, { highWaterMark: 128 });
     const stream2 = fs.createReadStream(file2, { highWaterMark: 128 });
-    let equal = await streamEqual(stream1, stream2);
+    const equal = await streamEqual(stream1, stream2);
     assert.ok(!equal);
   });
 });
-
 
 describe('Compare two similar streams', () => {
   it('Streams should not be equal', async () => {
     const stream1 = new PassThrough();
     const stream2 = new PassThrough();
 
-    writeToStream(stream1, 'you\'re the man now');
-    writeToStream(stream2, 'you\'re the man now dawg!');
+    writeToStream(stream1, "you're the man now");
+    writeToStream(stream2, "you're the man now dawg!");
 
-    let equal = await streamEqual(stream1, stream2);
+    const equal = await streamEqual(stream1, stream2);
     assert.ok(!equal);
   });
 });
@@ -132,10 +125,10 @@ describe('Comapre two object streams', () => {
       const stream1 = new PassThrough({ objectMode: true });
       const stream2 = new PassThrough({ objectMode: true });
 
-      writeToStream(stream1, [{ foo: 1 }, { bar: 3  }, { bizz: 'buzzz' }]);
-      writeToStream(stream2, [{ foo: 1 }, { bar: 3  }, { bizz: 'buzzz' }]);
+      writeToStream(stream1, [{ foo: 1 }, { bar: 3 }, { bizz: 'buzzz' }]);
+      writeToStream(stream2, [{ foo: 1 }, { bar: 3 }, { bizz: 'buzzz' }]);
 
-      let equal = await streamEqual(stream1, stream2);
+      const equal = await streamEqual(stream1, stream2);
       assert.ok(equal);
     });
   });
@@ -145,10 +138,10 @@ describe('Comapre two object streams', () => {
       const stream1 = new PassThrough({ objectMode: true });
       const stream2 = new PassThrough({ objectMode: true });
 
-      writeToStream(stream1, [{ foo: 1 }, { baz: 9  }, { bizz: 'buzzz' }]);
-      writeToStream(stream2, [{ foo: 1 }, { bar: 3  }, { bizz: 'buzzz' }]);
+      writeToStream(stream1, [{ foo: 1 }, { baz: 9 }, { bizz: 'buzzz' }]);
+      writeToStream(stream2, [{ foo: 1 }, { bar: 3 }, { bizz: 'buzzz' }]);
 
-      let equal = await streamEqual(stream1, stream2);
+      const equal = await streamEqual(stream1, stream2);
       assert.ok(!equal);
     });
   });
@@ -159,9 +152,6 @@ describe('Compare with an errornous stream', () => {
     const file1 = path.join(__dirname, '..', 'README.md');
     const stream1 = fs.createReadStream(file1, { highWaterMark: 128 });
     const stream2 = fs.createReadStream('dontexist', { highWaterMark: 128 });
-    assert.rejects(
-      streamEqual(stream1, stream2),
-      'ENOENT'
-    );
+    assert.rejects(streamEqual(stream1, stream2), 'ENOENT');
   });
 });
