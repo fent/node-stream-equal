@@ -1,4 +1,4 @@
-import { PassThrough, type Readable } from 'stream';
+import { PassThrough, type Readable } from 'node:stream';
 
 interface StreamState {
   id: number;

@@ -1,10 +1,10 @@
-import assert from 'assert';
-import fs from 'fs';
-import http from 'http';
+import assert from 'node:assert';
+import fs from 'node:fs';
+import http from 'node:http';
+import path from 'node:path';
+import { PassThrough, type Writable } from 'node:stream';
 import miniget from 'miniget';
 import nock from 'nock';
-import path from 'path';
-import { PassThrough, type Writable } from 'stream';
 import streamEqual from '../dist';
 
 const url1 = 'http://speedtest.ftp.otenet.gr/files/test1Mb.db';
@@ -24,7 +24,10 @@ after(() => {
  * @param {Object} options1
  * @param {Object} options2
  */
-const testEqual = (options1: {}, options2: {}) => {
+const testEqual = (
+  options1: Record<string, unknown>,
+  options2: Record<string, unknown>,
+) => {
   it('Streams should be equal', async () => {
     const file1 = __filename;
     const stream1 = fs.createReadStream(file1, options1);
@@ -41,7 +44,7 @@ const testEqual = (options1: {}, options2: {}) => {
  * @param {WritableStream} stream
  * @param {string|Array<Object>} list
  */
-const writeToStream = (stream: Writable, list: string | Array<{}>) => {
+const writeToStream = (stream: Writable, list: string | Array<unknown>) => {
   const pieces = Array.isArray(list) ? list : list.split(' ');
   const next = () => {
     const piece = pieces.shift();
