@@ -11,10 +11,6 @@ interface StreamState {
 
 /**
  * Tests that two readable streams are equal.
- *
- * @param {Readable} stream1
- * @param {Readable} stream2
- * @returns {boolean}
  */
 export = (stream1: Readable, stream2: Readable) =>
   new Promise<boolean>((resolve, reject) => {
@@ -65,11 +61,6 @@ export = (stream1: Readable, stream2: Readable) =>
 /**
  * Returns a function that compares emitted `read()` call with that of the
  * most recent `read` call from another stream.
- *
- * @param {StreamState} streamState
- * @param {StreamState} otherStreamState
- * @param {Function(boolean)} resolve
- * @return {Function(Buffer|string)}
  */
 const createReadFn = (
   streamState: StreamState,
@@ -132,10 +123,6 @@ const createReadFn = (
 
 /**
  * Creates a function that gets called when a stream ends.
- *
- * @param {StreamState} streamState
- * @param {StreamState} otherStreamState
- * @param {Function(boolean)} resolve
  */
 const createOnEndFn = (
   streamState: StreamState,
