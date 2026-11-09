@@ -9,10 +9,18 @@ interface StreamState {
   read?: () => void;
 }
 
+type StreamEqualFn = ((
+  stream1: Readable,
+  stream2: Readable,
+) => Promise<boolean>) & {
+  streamEqual: StreamEqualFn;
+  default: StreamEqualFn;
+};
+
 /**
  * Tests that two readable streams are equal.
  */
-export = (stream1: Readable, stream2: Readable) =>
+const streamEqual: StreamEqualFn = ((stream1: Readable, stream2: Readable) =>
   new Promise<boolean>((resolve, reject) => {
     const readStream1 = stream1.pipe(new PassThrough({ objectMode: true }));
     const readStream2 = stream2.pipe(new PassThrough({ objectMode: true }));
@@ -56,7 +64,7 @@ export = (stream1: Readable, stream2: Readable) =>
 
     // Start by reading from the first stream.
     streamState1.stream.once('readable', streamState1.read);
-  });
+  })) as StreamEqualFn;
 
 /**
  * Returns a function that compares emitted `read()` call with that of the
@@ -138,3 +146,13 @@ const createOnEndFn = (
     }
   };
 };
+
+streamEqual.streamEqual = streamEqual;
+streamEqual.default = streamEqual;
+
+// Statically recognizable exports for Node.js cjs-module-lexer (ESM named import support)
+module.exports = streamEqual;
+module.exports.default = streamEqual;
+module.exports.streamEqual = streamEqual;
+
+export = streamEqual;
