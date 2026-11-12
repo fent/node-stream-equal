@@ -5,7 +5,7 @@ import path from 'node:path';
 import { PassThrough, type Writable } from 'node:stream';
 import miniget from 'miniget';
 import nock from 'nock';
-import streamEqual from '../dist';
+import streamEqual from '../src';
 
 const url1 = 'http://speedtest.ftp.otenet.gr/files/test1Mb.db';
 const urlhost1 = 'http://speedtest.ftp.otenet.gr';
