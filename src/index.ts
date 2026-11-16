@@ -25,16 +25,30 @@ const streamEqual: StreamEqualFn = ((stream1: Readable, stream2: Readable) =>
     const readStream1 = stream1.pipe(new PassThrough({ objectMode: true }));
     const readStream2 = stream2.pipe(new PassThrough({ objectMode: true }));
 
-    const cleanup = (equal: boolean) => {
-      stream1.removeListener('error', reject);
+    const teardown = (keepErrorListeners = false) => {
+      stream1.unpipe(readStream1);
       readStream1.removeListener('end', onend1);
       readStream1.removeListener('readable', streamState1.read);
 
-      stream2.removeListener('error', reject);
+      stream2.unpipe(readStream2);
       readStream2.removeListener('end', onend2);
-      readStream1.removeListener('readable', streamState2.read);
+      readStream2.removeListener('readable', streamState2.read);
 
+      if (!keepErrorListeners) {
+        stream1.removeListener('error', onerror);
+        stream2.removeListener('error', onerror);
+      }
+    };
+
+    const cleanup = (equal: boolean) => {
+      teardown();
       resolve(equal);
+    };
+
+    const onerror = (err: Error) => {
+      // Keep absorbing errors from the other stream after rejecting.
+      teardown(true);
+      reject(err);
     };
 
     const streamState1: StreamState = {
@@ -56,10 +70,10 @@ const streamEqual: StreamEqualFn = ((stream1: Readable, stream2: Readable) =>
     const onend1 = createOnEndFn(streamState1, streamState2, cleanup);
     const onend2 = createOnEndFn(streamState2, streamState1, cleanup);
 
-    stream1.on('error', reject);
+    stream1.on('error', onerror);
     readStream1.on('end', onend1);
 
-    stream2.on('error', reject);
+    stream2.on('error', onerror);
     readStream2.on('end', onend2);
 
     // Start by reading from the first stream.

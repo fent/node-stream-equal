@@ -155,6 +155,39 @@ describe('Compare with an errornous stream', () => {
     const file1 = path.join(__dirname, '..', 'README.md');
     const stream1 = fs.createReadStream(file1, { highWaterMark: 128 });
     const stream2 = fs.createReadStream('dontexist', { highWaterMark: 128 });
-    assert.rejects(streamEqual(stream1, stream2), 'ENOENT');
+    await assert.rejects(streamEqual(stream1, stream2), /ENOENT/);
+  });
+});
+
+describe('Clean up after comparing', () => {
+  it('Unpipes both streams', async () => {
+    const stream1 = new PassThrough();
+    const stream2 = new PassThrough();
+    const result = streamEqual(stream1, stream2);
+
+    // Mismatch while both streams are still open.
+    stream1.write('a');
+    stream2.write('b');
+
+    assert.equal(await result, false);
+    assert.equal(stream1.listenerCount('data'), 0);
+    assert.equal(stream2.listenerCount('data'), 0);
+
+    stream1.end();
+    stream2.end();
+  });
+});
+
+describe('Errors from both streams', () => {
+  it('Absorbs the second error after rejecting', async () => {
+    const stream1 = new PassThrough();
+    const stream2 = new PassThrough();
+    const result = streamEqual(stream1, stream2);
+
+    stream1.emit('error', new Error('one'));
+    await assert.rejects(result, /one/);
+
+    // The other stream may still error; it should not become unhandled.
+    stream2.emit('error', new Error('two'));
   });
 });
